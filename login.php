@@ -14,6 +14,11 @@
 			<input class="col-6" type="submit" name="submit" value="submit">
 		</section>
 	</form>
-
+	<div class=" col-12 text-center text-danger">
+		<?php
+			session_start();
+			echo $_SESSION["loginError"];
+		?>
+	</div>
 </body>
 </html>
