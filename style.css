@@ -1,0 +1,111 @@
+.arrow {
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 2px;
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+/* Dropdown Button */
+.dropbtn {
+  background-color: lightgrey;
+  color: white;
+  padding: 8px;
+  font-size: 12px;
+  border: none;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  font-size: 12px;
+}
+
+/* Links inside the dropdown */
+.dropdown-content input {
+  color: black;
+  padding: 6px 6px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content input:hover {
+	opacity: 0.8;
+	text-decoration: none;
+	color: black;
+	font-weight: 600;
+
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+	background-color: lightgrey;
+	opacity: 0.8;
+}
+.nostatus{
+  background-color: lightgrey;
+  border: none;
+}
+
+.redstatus{
+	background-color: #eb5a46;
+  border: none;
+}
+
+.orangestatus{
+	background-color: #ff9f1a;
+  border: none;
+}
+
+.yellowstatus{
+	background-color: #f2d600;
+  border: none;
+}
+
+.greenstatus{
+	background-color: #519839;
+  border: none;
+}
+
+.borderleft {
+	border-left: 4px solid lightgrey; 
+}
+
+.greenborder{
+  border-left-color: #519839;
+}
+
+.yellowborder{
+  border-left-color: #f2d600;
+}
+
+.orangeborder{
+  border-left-color: #ff9f1a;
+}
+
+.redborder{
+  border-left-color: #eb5a46;
+}
+
+.emptyborder{
+  border-left-color: lightgrey;
+}

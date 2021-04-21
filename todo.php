@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>To Do</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-</head>
-<body>
-	<h1>To Do List</h1>
-	<a class="btn btn-primary" href="maketodolist.php">+ Add To do</a>
-	<?php
+<?php
 	require "db-connect.php";
 	// checks if you're logged in
 	session_start();
@@ -17,9 +8,45 @@
 			header( "Location: login.php" );
 		}
 
-		var_dump($_SESSION["isLoggedIn"]);
-	?>
-	<h1 class="text-center">Task Lists</h1>
+		$_SESSION["error"] = "";
+		$_SESSION["formcheck"] = false;
+		// var_dump($_SESSION["isLoggedIn"]);
+
+		function getLists(){
+			global $lists;
+			$conn = databaseConnection();
+			$stmt = $conn->prepare("SELECT * FROM todolists");
+			$stmt->execute();
+			$lists = $stmt->fetchall();
+			$conn = null;
+			return $lists;
+		};
+		getLists();
+
+		function getTasks($id){
+			global $info;
+			$conn = databaseConnection();
+			$stmt = $conn->prepare("SELECT * FROM tasks WHERE todolistid=:todolistid");
+			$stmt->bindParam(':todolistid', $id);
+			$stmt->execute();
+			$info = $stmt->fetchall();
+			$conn = null;
+		}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>To Do</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	
+</head>
+<body class="col-12">
+	<h1 class="text-center">To Do List</h1>
+	<a class="btn btn-primary col-3 d-block mx-auto" href="maketodolist.php">+ Add To do</a>
+	
+	<h2 class="text-center">Task Lists</h2>
 		<div class="row">
 	<!-- <section class="col-3">
 		<div class="bg-light">
@@ -33,40 +60,125 @@
 	</section> -->
 
 		<?php
-			function getLists(){
-				global $lists;
-				$conn = databaseConnection();
-				$stmt = $conn->prepare("SELECT * FROM todolists");
-				$stmt->execute();
-				$lists = $stmt->fetchall();
-				$conn = null;
-				return $lists;
-			};
-			getLists();
-			var_dump($lists);
+			
+			// var_dump($lists);
 			// foreach (array_combine($lists, $details) as $list => $detail){
 
 
-
 			foreach ($lists as $list){ 
-					global $info;
-					$conn = databaseConnection();
-					$stmt = $conn->prepare("SELECT * FROM tasks WHERE todolistid=:todolistid");
-					$stmt->bindParam(':todolistid', $list["listid"]);
-					$stmt->execute();
-					$info = $stmt->fetchall();
-					$conn = null;
+					getTasks($list["listid"]);
+
+					// global $info;
+					// $conn = databaseConnection();
+					// $stmt = $conn->prepare("SELECT * FROM tasks WHERE todolistid=:todolistid");
+					// $stmt->bindParam(':todolistid', $list["listid"]);
+					// $stmt->execute();
+					// $info = $stmt->fetchall();
+					// $conn = null;
 					?>
 
 				<section class="col-3">
 					<div class="bg-light">
-
 						<h2 class="text-center"><?php echo $list["name"]; ?></h2>
 						<h4 class="text-center">Task list</h4>
 						<?php foreach ($info as $details){  ?>
-							<p class="font-weight-bold pl-4"><?php echo $details["title"]; ?></p>
-							<p class="pl-4"><?php echo $details["description"]; ?></p>
+				
+								<?php  
+									if($details["status"] == "red"){
+										echo '<section id="taskbox" class="bg-white m-1 borderleft taskbox redborder">';
+										
+	        						} else if ($details["status"] == "green"){
+										echo '<section id="taskbox" class="bg-white m-1 borderleft taskbox greenborder">';
+										
+	        						} else if ($details["status"] == "orange"){
+										echo '<section id="taskbox" class="bg-white m-1 borderleft taskbox orangeborder">';
+										
+	        						} else if ($details["status"] == "yellow"){
+										echo '<section id="taskbox" class="bg-white m-1 borderleft taskbox yellowborder">';
+						
+	        						} else if ($details["status"] == "" || $details["status"] == "lightgrey"){
+										echo '<section id="taskbox" class="bg-white m-1 borderleft taskbox emptyborder">';
+										
+	        						}
+
+								
+        						?>
+								<div class="dropdown">
+									<?php
+										if($details["status"] == "red"){
+											echo '<button class="dropbtn redstatus">Status</button>';
+											
+		        						} else if ($details["status"] == "green"){
+											echo '<button class="dropbtn greenstatus">Status</button>';
+											
+		        						} else if ($details["status"] == "orange"){
+											echo '<button class="dropbtn orangestatus">Status</button>';
+											
+		        						} else if ($details["status"] == "yellow"){
+											echo '<button class="dropbtn yellowstatus">Status</button>';
+							
+		        						} else if ($details["status"] == "" || $details["status"] == "lightgrey"){
+											echo '<button class="dropbtn nostatus">Status</button>';
+											
+		        						}
+
+									?>
+							  		<div class="dropdown-content">
+							    		<form class="m-0" method="POST" action="changestatus.php">
+							    			<input type="hidden"  name="taskid" value="<?php echo $details["taskid"]; ?>">
+							    			<input type="hidden"  name="status" value="lightgrey">
+							    			<input class="nostatus col-12" type="submit" value="No status">
+							    		</form>
+							    		<form class="m-0" method="POST" action="changestatus.php">
+							    			<input type="hidden"  name="taskid" value="<?php echo $details["taskid"]; ?>">
+							    			<input type="hidden"  name="status" value="red">
+							    			<input class="redstatus col-12" type="submit" value="Don't start">
+							    		</form>
+							    		<form class="m-0" method="POST" action="changestatus.php">
+							    			<input type="hidden"  name="taskid" value="<?php echo $details["taskid"]; ?>">
+							    			<input type="hidden"  name="status" value="orange">
+							    			<input class="orangestatus col-12" type="submit" value="Not Started">
+							    		</form>
+							    		<form class="m-0" method="POST" action="changestatus.php">
+							    			<input type="hidden"  name="taskid" value="<?php echo $details["taskid"]; ?>">
+							    			<input type="hidden"  name="status" value="yellow">
+							    			<input class="yellowstatus col-12" type="submit" value="Started">
+							    		</form>
+							    		<form class="m-0" method="POST" action="changestatus.php">
+							    			<input type="hidden"  name="taskid" value="<?php echo $details["taskid"]; ?>">
+							    			<input type="hidden"  name="status" value="green">
+							    			<input class="greenstatus col-12" type="submit" value="Done">
+							    		</form>
+							  		</div>
+								</div>
+								<h5 class=" pl-4"><?php echo $details["title"]; ?></h5>
+								<p class="pl-4"><?php echo $details["description"]; ?></p>
+								<div class="mx-auto col-12 row justify-content-center">
+									<form class="m-1" method="POST" action="edittask.php">
+										<input type="hidden" id="editTask" name="taskid" value="<?php echo $details["taskid"]; ?>">
+										<input class="btn-warning btn p-1" type="submit" value="Edit Task">
+									</form>
+									<form class="m-1" method="POST" action="">
+										<input type="hidden" id="deleteTask" name="taskid" value="<?php echo $details["taskid"]; ?>">
+										<input class="btn-danger btn p-1" type="submit" value="Delete Task">
+									</form>
+								</div>
+							</section>
 						<?php }; ?>
+						<div  class="col-12 row justify-content-center m-0">
+							<form class="m-2" method="POST" action="editlist.php">
+								<input type="hidden" id="editList" name="listid" value="<?php echo $list["listid"]; ?>">
+								<input class="btn-warning btn p-1" type="submit" value="Edit List">
+							</form>
+							<form class="m-2" method="POST" action="addtask.php">
+								<input type="hidden" id="addTask" name="listid" value="<?php echo $list["listid"]; ?>">
+								<input class="btn-success btn p-1" type="submit" value="Add Task">
+							</form>
+							<form class="m-2" method="POST" action="deletelist.php">
+								<input type="hidden" id="addTask" name="listid" value="<?php echo $list["listid"]; ?>">
+								<input class="btn-danger btn p-1" type="submit" value="Delete List">
+							</form>
+						</div>
 					</div>
 				</section>
 			<?php 
