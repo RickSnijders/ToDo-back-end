@@ -1,15 +1,3 @@
-.arrow {
-  border: solid black;
-  border-width: 0 2px 2px 0;
-  display: inline-block;
-  padding: 2px;
-}
-
-.down {
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-}
-
 /* Dropdown Button */
 .dropbtn {
   background-color: lightgrey;
@@ -58,7 +46,6 @@
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {
-	background-color: lightgrey;
 	opacity: 0.8;
 }
 .nostatus{
@@ -108,4 +95,23 @@
 
 .emptyborder{
   border-left-color: lightgrey;
+}
+
+.taskcontainer {
+  height: 36rem;
+  overflow: auto;
+}
+/*
+.container, .wrapper1{
+    margin:20px 0;
+}*/
+
+.wrapper1{
+    overflow-x:scroll;
+}
+.content{
+    display: inline-flex;
+}
+.wrapper1{
+    width:100%;
 }

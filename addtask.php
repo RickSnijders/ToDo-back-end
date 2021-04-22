@@ -1,6 +1,12 @@
 <?php 
-	require "db-connect.php";
 	session_start();
+		if($_SESSION["isLoggedIn"] == true){
+			echo "logged in";
+		} else{
+			header( "Location: login.php" );
+		}
+	require "db-connect.php";
+	
 	function getList(){
 		global $list;
 		$id = $_POST["listid"];
@@ -20,11 +26,12 @@
 		}
 		$id = $_POST["listid"];
 		$conn = databaseConnection();
-		$stmt = $conn->prepare("INSERT INTO tasks (todolistid, title, description)
-		VALUES (:id, :title, :description);");
+		$stmt = $conn->prepare("INSERT INTO tasks (todolistid, title, description, duration)
+		VALUES (:id, :title, :description, :duration);");
 		$stmt->bindParam(':id', $id);
 		$stmt->bindParam(':description', $_POST["description"]);
 		$stmt->bindParam(':title', $_POST["title"]);
+		$stmt->bindParam(':duration', $_POST["duration"]);
 		$stmt->execute();
 		$conn = null;
 	    	
@@ -37,12 +44,22 @@
 					echo "Please fill in all fields";
 					echo "</div>";
 				}
-			}else if(isset($_POST['description']) && isset($_POST['title'])){
+			}else if(isset($_POST['description']) && isset($_POST['title']) && isset($_POST['duration']) ){
 				if (!empty($_POST['title'])) {
 					if(!empty($_POST['description'])){
-						getList();
-  						addTask();
-  						header( "Location: todo.php" );
+						if(!empty($_POST['duration']) && is_numeric($_POST["duration"])){
+							getList();
+	  						addTask();
+	  						header( "Location: todo.php" );
+	  					}else{
+							echo "<div class='col-6 mx-auto text-center m-1 text-danger'>";
+							echo "Please fill in all fields";
+							echo "</div>";
+						}
+					}	else{
+						echo "<div class='col-6 mx-auto text-center m-1 text-danger'>";
+						echo "Please fill in all fields";
+						echo "</div>";
 					}
 				} else{
 					echo "<div class='col-6 mx-auto text-center m-1 text-danger'>";
@@ -84,6 +101,10 @@
 			  	<div class="form-group">
 			   		<label for="description">Description</label>
 			    	<textarea class="form-control" name="description" rows="3"></textarea>
+			  	</div>
+			  	<div class="form-group">
+			    	<label for="duration">Duration</label>
+			    	<input type="number" class="form-control" name="duration" placeholder="Duration">
 			  	</div>
 				<input class="btn-success btn p-1" type="submit" value="Add task">
 			</form>

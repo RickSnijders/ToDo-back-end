@@ -1,4 +1,12 @@
 <?php
+	session_start();
+		if($_SESSION["isLoggedIn"] == true){
+			echo "logged in";
+		} else{
+			header( "Location: login.php" );
+		}
+
+		var_dump($_SESSION["isLoggedIn"]);
 	var_dump($_POST);
 	require "db-connect.php";
 	function changeStatus(){

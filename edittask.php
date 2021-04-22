@@ -1,6 +1,12 @@
 <?php 
 	require "db-connect.php";
 	session_start();
+		if($_SESSION["isLoggedIn"] == true){
+			echo "logged in";
+		} else{
+			header( "Location: login.php" );
+		}
+
 	function getTask(){
 			global $task;
 			$id = $_POST["taskid"];
@@ -13,7 +19,31 @@
 			return $task;
 		};
 	getTask();
-	var_dump($list);
+
+	function editTask() {
+		$id = $_POST["taskid"];
+    	if($_POST["title"] == "" || $_POST["description"] == "" || $_POST["duration"] == ""){
+    		echo "Please fill in the field";
+    	} else if (!is_numeric($_POST["duration"])){
+    		echo "Duration can only contain numbers";
+    	}
+    	else{
+    		$title = htmlspecialchars($_POST['title']);
+    		$description = htmlspecialchars($_POST['description']);
+    		$duration = htmlspecialchars($_POST['duration']);
+			$conn = databaseConnection();
+			$stmt = $conn->prepare("UPDATE tasks
+					SET title = :title, description = :description, duration = :duration
+					WHERE taskid= :id;");
+			$stmt->bindParam(':title', $title);
+			$stmt->bindParam(':description', $description);
+			$stmt->bindParam(':id', $id);
+			$stmt->bindParam(':duration', $duration);
+			$stmt->execute();
+			$conn = null;
+			header( "Location: todo.php" );
+    	};	
+	};
 ?>
 <!DOCTYPE html>
 <html>
@@ -37,31 +67,17 @@
 			   		<label for="description">Description</label>
 			    	<textarea class="form-control" name="description" rows="3"><?php echo $task["description"] ?></textarea>
 			  	</div>
+			  	<div class="form-group">
+			   		<label for="duration">Duration</label>
+			    	<input type="number" class="form-control" name="duration" value="<?php echo $task["duration"] ?>" placeholder="Duration">
+			  	</div>
 				<input class="btn-success btn p-1" type="submit" value="Add task">
 			</form>
 		</div>
 	</section>
 
 	<?php
-		function editTask() {
-			$id = $_POST["taskid"];
-	    	if($_POST["title"] == "" || $_POST["description"] == ""){
-	    		echo "Please fill in the field";
-	    	} else{
-	    		$title = htmlspecialchars($_POST['title']);
-	    		$description = htmlspecialchars($_POST['description']);
-				$conn = databaseConnection();
-				$stmt = $conn->prepare("UPDATE tasks
-						SET title = :title, description = :description
-						WHERE taskid= :id;");
-				$stmt->bindParam(':title', $title);
-				$stmt->bindParam(':description', $description);
-				$stmt->bindParam(':id', $id);
-				$stmt->execute();
-				$conn = null;
-				header( "Location: todo.php" );
-	    	};	
-		};
+		
 
 		if(isset($_POST['title']))
 		{

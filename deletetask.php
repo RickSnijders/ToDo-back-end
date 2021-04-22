@@ -8,34 +8,24 @@
 			header( "Location: login.php" );
 		}
 
-	function getList(){
-			global $list;
-			$id = $_POST["listid"];
-			$conn = databaseConnection();
-			$stmt = $conn->prepare("SELECT * FROM todolists WHERE listid=:listid");
-			$stmt->bindParam(':listid', $id);
-			$stmt->execute();
-			$list = $stmt->fetch();
-			$conn = null;
-			return $list;
-		};
-	getList();
-	// var_dump($list);
-	function deleteList() {
-		$id = $_POST["listid"];
+	function getTask(){
+		global $task;
+		$id = $_POST["taskid"];
 		$conn = databaseConnection();
-		$stmt = $conn->prepare("DELETE FROM todolists WHERE listid = :id;");
-		$stmt->bindParam(':id', $id);
+		$stmt = $conn->prepare("SELECT * FROM tasks WHERE taskid=:taskid");
+		$stmt->bindParam(':taskid', $id);
 		$stmt->execute();
+		$task = $stmt->fetch();
 		$conn = null;
-		deleteTasks();
-	    	
-	}
-
-	function deleteTasks(){
-		$id = $_POST["listid"];
+		return $task;
+	};
+	getTask();
+	// var_dump($list);
+	
+	function deleteTask(){
+		$id = $_POST["taskid"];
 		$conn = databaseConnection();
-		$stmt = $conn->prepare("DELETE FROM tasks WHERE todolistid = :id;");
+		$stmt = $conn->prepare("DELETE FROM tasks WHERE taskid = :id;");
 		$stmt->bindParam(':id', $id);
 		$stmt->execute();
 		$conn = null;
@@ -52,11 +42,12 @@
 
 	<section class="col-10 mx-auto">
 		<div class="bg-light">
-			<h1 class="text-center mt-3">Are you sure you want to delete the <?php echo $list["name"]; ?> list</h1>
+			<h1 class="text-center mt-3">Are you sure you want to delete the <?php echo $task["title"]; ?> task</h1>
+			<p>Description: <?php echo $task["description"]; ?></p>
 			<div class=" col-12 row justify-content-center">
 				<form method="POST" action="">
-					<input type="hidden" id="deleteListhidden" name="listid" value="<?php echo $_POST["listid"]; ?>">
-					<input type="hidden" id="deleteList" name="deletelist" value="true">
+					<input type="hidden" id="deleteTaskhidden" name="taskid" value="<?php echo $_POST["taskid"]; ?>">
+					<input type="hidden" id="deleteTask" name="deletetask" value="true">
 					<input class="btn-success btn pl-4 pr-4 p-2 m-2" type="submit" value="Yes">
 				</form>
 				<a  href="todo.php" class="btn btn-danger pl-4 pr-4 p-2 m-2">No</a>
@@ -67,12 +58,13 @@
 	<?php
 
 
-		
 
-		if(isset($_POST['deletelist']))
+
+
+		if(isset($_POST['deletetask']))
 		{
-			getList();
-	  		deleteList();
+			getTask();
+	  		deleteTask();
 	  		header( "Location: todo.php" );
 		} else{
 			if ($_SESSION["formcheck"] == true){

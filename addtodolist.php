@@ -1,6 +1,13 @@
 <?php
 	require "db-connect.php";
-	
+	session_start();
+		if($_SESSION["isLoggedIn"] == true){
+			echo "logged in";
+		} else{
+			header( "Location: login.php" );
+		}
+
+		var_dump($_SESSION["isLoggedIn"]);
 	foreach ($_POST as $key => $value ) {
     	$_POST[$key] = htmlspecialchars($value);
 	}
@@ -14,14 +21,7 @@
 
 
 	// checks if you're logged in
-	session_start();
-		if($_SESSION["isLoggedIn"] == true){
-			echo "logged in";
-		} else{
-			header( "Location: login.php" );
-		}
-
-		var_dump($_SESSION["isLoggedIn"]);
+	
 	
 		// checks if all fields are filled
 	
@@ -62,6 +62,17 @@
 						header( "Location: maketodolist.php" );
 						return;
 					}
+					if(empty ($_POST["duration".$i])){
+						$_SESSION["error"] = "Please fill in all fields";
+						header( "Location: maketodolist.php" );
+						return;
+					}
+					if(!is_numeric($_POST["duration".$i])){
+						$_SESSION["error"] = "Duration can only contain numbers";
+						header( "Location: maketodolist.php" );
+						return;
+					}
+
 				}
 				addList();
 			} else{
@@ -118,13 +129,15 @@
 		for ($i=1; $i <= $taskcount ; $i++) { 
 			$title = $_POST["title".$i];
 			$description = $_POST["description".$i];
+			$duration = $_POST["duration".$i];
 
 			$conn = databaseConnection();
-			$stmt = $conn->prepare("INSERT INTO tasks (todolistid, title, description)
-			VALUES (:listid, :title, :description);");
+			$stmt = $conn->prepare("INSERT INTO tasks (todolistid, title, description, duration)
+			VALUES (:listid, :title, :description, :duration);");
 			$stmt->bindParam(':listid', $listid);
 			$stmt->bindParam(':title', $title);
 			$stmt->bindParam(':description', $description);
+			$stmt->bindParam(':duration', $duration);
 			$stmt->execute();
 			$conn = null;
 
