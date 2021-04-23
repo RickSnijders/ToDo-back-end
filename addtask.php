@@ -7,6 +7,7 @@
 		}
 	require "db-connect.php";
 	
+	// Get list information from database
 	function getList(){
 		global $list;
 		$id = $_POST["listid"];
@@ -20,6 +21,7 @@
 	};
 	getList();
 
+	// Adds a task to the chosen list in the database
 	function addTask() {
 		foreach ($_POST as $key => $value ) {
 			$_POST[$key] = htmlspecialchars($value);
@@ -37,6 +39,7 @@
 	    	
 	};
 
+	// Checks if all data is filled
 	function checkData(){
 		if (!isset($_POST['title'])) {
 				if(!isset($_POST['description'])){

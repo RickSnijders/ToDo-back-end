@@ -8,6 +8,7 @@
 			header( "Location: login.php" );
 		}
 
+	// Gets all information of the chosen task from the database
 	function getTask(){
 		global $task;
 		$id = $_POST["taskid"];
@@ -22,6 +23,7 @@
 	getTask();
 	// var_dump($list);
 	
+	// Deletes the chosen task from the database
 	function deleteTask(){
 		$id = $_POST["taskid"];
 		$conn = databaseConnection();

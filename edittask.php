@@ -7,6 +7,7 @@
 			header( "Location: login.php" );
 		}
 
+	// get task information from database
 	function getTask(){
 			global $task;
 			$id = $_POST["taskid"];
@@ -20,6 +21,7 @@
 		};
 	getTask();
 
+	// Edits the task in the database
 	function editTask() {
 		$id = $_POST["taskid"];
     	if($_POST["title"] == "" || $_POST["description"] == "" || $_POST["duration"] == ""){
@@ -55,8 +57,7 @@
 
 	<section class="col-10 mx-auto">
 		<div class="bg-light">
-			<h2 class="text-center">List: </h2>
-			<h4 class="text-center">Task: </h4>
+			<h4 class="text-center">Task: <?php echo $task["title"] ?> </h4>
 			<form method="POST" action="">
 				<input type="hidden" id="deleteListhidden" name="taskid" value="<?php echo $_POST["taskid"]; ?>">
 			  	<div class="form-group">
@@ -76,9 +77,9 @@
 		</div>
 	</section>
 
+	<!-- checks if the $_POST is filled to check if the form has been submitted -->
 	<?php
 		
-
 		if(isset($_POST['title']))
 		{
 			editTask();

@@ -8,6 +8,7 @@
 			header( "Location: login.php" );
 		}
 
+	// Gets the information of the list from the database
 	function getList(){
 			global $list;
 			$id = $_POST["listid"];
@@ -21,6 +22,8 @@
 		};
 	getList();
 	// var_dump($list);
+
+	// Deletes the chosen list from the database
 	function deleteList() {
 		$id = $_POST["listid"];
 		$conn = databaseConnection();
@@ -32,6 +35,7 @@
 	    	
 	}
 
+	// Deletes all the tasks of the chosen list from the database
 	function deleteTasks(){
 		$id = $_POST["listid"];
 		$conn = databaseConnection();

@@ -7,6 +7,8 @@
 		}
 
 	require "db-connect.php";
+
+	// Gets the information of the chosen list from the database
 	function getList(){
 			global $list;
 			$id = $_POST["listid"];
@@ -21,6 +23,8 @@
 	getList();
 	// var_dump($list);
 
+
+	// Changes the name of the chosen list in the database
 	function changeName() {
 		$id = $_POST["listid"];
     	if($_POST["newName"] == ""){

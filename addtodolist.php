@@ -29,7 +29,7 @@
 	$taskcount = $_POST["taskcount"];
     $id = $_SESSION["userId"];
 	$name = $_POST["listName"];
-
+	// checks if the name of the list already exists
 	function checkName(){
 		global $id, $name, $data;
 		$conn = databaseConnection();
@@ -45,7 +45,7 @@
 	
  	checkName();
 
-
+ 	// checks if all the values are filled
 	function checkData(){
 		global $name, $_POST, $data;
 		var_dump($data);

@@ -9,6 +9,8 @@
 		var_dump($_SESSION["isLoggedIn"]);
 	var_dump($_POST);
 	require "db-connect.php";
+
+	// changes the status in the database
 	function changeStatus(){
 		$id = $_POST["taskid"];
 		$status = $_POST["status"];

@@ -9,6 +9,7 @@
 	echo $password;
 	var_dump($password);
 
+	// checks if all fields are filled
 	if (isset($_POST["email"]) && isset($_POST["password"])) {
 		if (empty ($email)) {
         	echo "Vul een email in <br />";
@@ -38,6 +39,7 @@
 	// var_dump($email);
 	// var_dump($password);
 
+	// Gets the details from the chosen email from the database
 	function getDetails(){
 		global $email, $password, $user;
 		$conn = databaseConnection();
@@ -51,7 +53,7 @@
 		return $user;
 	}
 
-	
+	// Checks if the password is correct
 	function checkDetails(){
 		global $user;
 		var_dump($user);

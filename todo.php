@@ -34,6 +34,31 @@
 			$info = $stmt->fetchall();
 			$conn = null;
 		}
+
+		function getTasksByFilter($idlist, $filter){
+			$conn = databaseConnection();
+			if( $filter == "duration"){
+				$stmt = $conn->prepare("SELECT * FROM tasks WHERE todolistid=:todolistid ORDER BY duration ASC");
+			} else if ($filter == "status"){
+				$stmt = $conn->prepare("SELECT * FROM tasks WHERE todolistid=:todolistid ORDER BY status ASC");
+			}
+			$stmt->bindParam(':todolistid', $idlist);
+
+			// $stmt->bindParam(':filter', $filter);
+			$stmt->execute();
+			$details = $stmt->fetchall();
+			$conn = null;
+			return $details;
+		}
+			
+
+
+			// For the filter vvvv
+
+						
+
+
+		
 ?>
 
 <!DOCTYPE html>
@@ -55,28 +80,51 @@
 			<?php
 				
 				// var_dump($lists);
-				// foreach (array_combine($lists, $details) as $list => $detail){
+
+				// Outputs all list from database
+				foreach ($lists as $list){
+						getTasks($list["listid"]); 
+						// var_dump($details);
+						if(isset($_POST["filter"]) && $_POST["listid"] == $list["listid"]){
+							if($_POST["filter"] == "duration"){
+								echo "Filter is duration";
+								$filter = "duration";
+								$info = getTasksByFilter($_POST["listid"], $filter, $details["taskid"]);
+								// var_dump($info);
+
+							}if($_POST["filter"] == "status"){
+								echo "Filter is status";
+								$filter = "status";
+								$info = getTasksByFilter($_POST["listid"], $filter, $details["taskid"]);
+								// var_dump($details);
+								// var_dump($info);
+								
+							}
+						} 
 
 
-				foreach ($lists as $list){ 
-						getTasks($list["listid"]);
+
 						?>
 
 					<section class="col-3">
 						<div class="bg-light">
 							<h2 class="text-center"><?php echo $list["name"]; ?></h2>
 							<h4 class="text-center">Task list</h4>
-							<form class=" col-12 row">
+							<form class="col-12 row justify-content-end m-0" method="POST" action="">
 								<select name="filter" class="p-1">
+									<option value="id">ID</option>
 									<option value="duration">Duration</option>
 									<option value="status">Status</option>
 								</select>
+								<input type="hidden" id="filterhidden" name="listid" value="<?php echo $list["listid"]; ?>">
 								<input class="btn-primary btn p-1" type="submit" value="Filter">
 							</form>
 							<div class="taskcontainer">
+								<!-- Outputs all tasks in the list it belongs to -->
 								<?php foreach ($info as $details){  ?>
-						
+								<!-- Changes color of border depending on status value from the database -->
 								<?php  
+									
 									if($details["status"] == "red"){
 										echo '<section id="taskbox" class="bg-white m-1 borderleft taskbox redborder">';
 										
@@ -97,6 +145,7 @@
 								
         						?>
 								<div class="dropdown">
+								<!-- Changes color of button depending on status value from the database -->
 								<?php
 									if($details["status"] == "red"){
 										echo '<button class="dropbtn redstatus">Status</button>';
